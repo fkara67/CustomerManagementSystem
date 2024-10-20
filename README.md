@@ -1,2 +1,2 @@
-# CustomerManagementSystem
-Customer Management System With Java Swing
+# OrderManagementSystem
+Order Management System With Java Swing
