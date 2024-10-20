@@ -16,7 +16,7 @@ public class DashboardUI extends JFrame {
     private JPanel container;
     private JLabel lbl_welcome;
     private JButton btn_logout;
-    private JTabbedPane tabbedPane1;
+    private JTabbedPane pnl_product;
     private JPanel pnl_customer;
     private JScrollPane scrl_customer;
     private JTable tbl_customer;
@@ -28,9 +28,22 @@ public class DashboardUI extends JFrame {
     private JButton btn_customer_new;
     private JLabel lbl_f_customer_name;
     private JLabel lbl_f_customer_type;
+    private JScrollPane scrl_product;
+    private JTable tbl_product;
+    private JPanel pnl_product_filter;
+    private JTextField fld_f_product_name;
+    private JTextField fld_f_product_code;
+    private JComboBox cmb_product_stock;
+    private JButton btn_product_filter;
+    private JButton btn_product_filter_reset;
+    private JButton btn_product_new;
+    private JLabel lbl_f_product_name;
+    private JLabel lbl_f_product_code;
+    private JLabel lbl_f_product_stock;
     private Users user;
     private CustomerController customerController;
     private DefaultTableModel tmdl_customer = new DefaultTableModel();
+    private DefaultTableModel tmdl_product = new DefaultTableModel();
     private JPopupMenu popup_customer = new JPopupMenu();
 
     public DashboardUI(Users user) {
@@ -67,6 +80,39 @@ public class DashboardUI extends JFrame {
         this.cmb_f_customer_type.setModel(new DefaultComboBoxModel<>(Customer.TYPE.values()));
         this.cmb_f_customer_type.setSelectedItem(null);
 
+        //PRODUCT TAB
+        loadProductTable(null);
+
+    }
+
+    private void loadProductTable(ArrayList<Customer> products) {
+        Object[] columnProduct = {"ID", "Product Name", "Product Code", "Price", "Stock"};
+
+        if (products == null) {
+            products = this.customerController.findAll();
+        }
+
+        // Table reset(Tablo sıfırlama)
+        DefaultTableModel clearModel = (DefaultTableModel) this.tbl_customer.getModel();
+        clearModel.setRowCount(0);
+
+        this.tmdl_customer.setColumnIdentifiers(columnProduct);
+        for (Customer customer : products) {
+            Object[] rowObject = {
+                    customer.getId(),
+                    customer.getName(),
+                    customer.getType(),
+                    customer.getPhone(),
+                    customer.getMail(),
+                    customer.getAddress()
+            };
+            this.tmdl_customer.addRow(rowObject);
+        }
+
+        this.tbl_customer.setModel(tmdl_customer);
+        this.tbl_customer.getTableHeader().setReorderingAllowed(false);
+        this.tbl_customer.getColumnModel().getColumn(0).setMaxWidth(50);
+        this.tbl_customer.setEnabled(false);
     }
 
     private void loadCustomerButtonEvent() {
