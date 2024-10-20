@@ -45,7 +45,7 @@ public class CustomerUI extends JFrame {
             this.lbl_title.setText("Add Customer");
         } else {
             this.lbl_title.setText("Update Customer");
-            this.lbl_customer_name.setText(this.customer.getName());
+            this.fld_customer_name.setText(this.customer.getName());
             this.fld_customer_mail.setText(this.customer.getMail());
             this.fld_customer_phone.setText(this.customer.getPhone());
             this.tarea_customer_address.setText(this.customer.getAddress());
@@ -69,6 +69,8 @@ public class CustomerUI extends JFrame {
 
                 if (this.customer.getId() == 0) {
                     result = this.customerController.save(this.customer);
+                } else {
+                    result = this.customerController.update(this.customer);
                 }
 
                 if (result) {

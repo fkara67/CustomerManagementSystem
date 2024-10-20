@@ -38,15 +38,17 @@ public class Helper {
 
         if (parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) return false;
 
-//        if (!parts[1].contains(".")) return false;
-//
-//        if (parts[1].split("\\.").length < 2) return false;
+        if (!parts[1].contains(".")) return false;
+
+        if (parts[1].split("\\.").length < 2) return false;
 
         return true;
     }
 
     public static void optionPaneDialogTR() {
         UIManager.put("OptionPane.okButtonText","Tamam");
+        UIManager.put("OptionPane.yesButtonText","Evet");
+        UIManager.put("OptionPane.noButtonText","Hayır");
     }
 
     public static void showMsg(String message) {
@@ -72,5 +74,17 @@ public class Helper {
                 title = "Message";
         }
         JOptionPane.showMessageDialog(null,msg,title,JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public static boolean confirm(String str) {
+        optionPaneDialogTR();
+        String msg;
+
+        if (str.equals("sure")) {
+            msg = "Are you sure to perform this action!";
+        } else {
+            msg = str;
+        }
+        return JOptionPane.showConfirmDialog(null,msg,"Are You Sure ?",JOptionPane.YES_NO_OPTION) == 0;
     }
 }

@@ -70,6 +70,54 @@ public class CustomerDao {
         return customer;
     }
 
+    public boolean update(Customer customer) {
+        String query = "UPDATE customer SET " +
+                "name = ? , " +
+                "type = ? , " +
+                "phone = ? , " +
+                "mail = ? , " +
+                "address = ? " +
+                "WHERE id = ? ";
+
+        try {
+            PreparedStatement pr = this.connection.prepareStatement(query);
+            pr.setString(1,customer.getName());
+            pr.setString(2,customer.getType().toString());
+            pr.setString(3,customer.getPhone());
+            pr.setString(4,customer.getMail());
+            pr.setString(5, customer.getAddress());
+            pr.setInt(6,customer.getId());
+            return pr.executeUpdate() != -1;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
+    public boolean delete(int id) {
+        String query = "DELETE FROM customer WHERE id = ?";
+        try {
+            PreparedStatement pr = this.connection.prepareStatement(query);
+            pr.setInt(1,id);
+            return pr.executeUpdate() != -1;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ArrayList<Customer> query(String query) {
+        ArrayList<Customer> customers = new ArrayList<>();
+        try {
+            ResultSet rs = this.connection.createStatement().executeQuery(query);
+            while (rs.next()) {
+                customers.add(this.match(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customers;
+    }
 
     public Customer match(ResultSet rs) throws SQLException {
         Customer customer = new Customer();

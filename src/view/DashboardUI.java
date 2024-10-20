@@ -22,7 +22,7 @@ public class DashboardUI extends JFrame {
     private JTable tbl_customer;
     private JPanel pnl_customer_filter;
     private JTextField fld_f_customer_name;
-    private JComboBox cmb_customer_type;
+    private JComboBox<Customer.TYPE> cmb_f_customer_type;
     private JButton btn_customer_filter;
     private JButton btn_customer_reset;
     private JButton btn_customer_new;
@@ -60,10 +60,12 @@ public class DashboardUI extends JFrame {
             LoginUI loginUI = new LoginUI();
         });
 
+        //CUSTOMER TAB
         loadCustomerTable(null);
         loadCustomerPopupMenu();
         loadCustomerButtonEvent();
-
+        this.cmb_f_customer_type.setModel(new DefaultComboBoxModel<>(Customer.TYPE.values()));
+        this.cmb_f_customer_type.setSelectedItem(null);
 
     }
 
@@ -76,6 +78,20 @@ public class DashboardUI extends JFrame {
                     loadCustomerTable(null);
                 }
             });
+        });
+
+        btn_customer_filter.addActionListener(e -> {
+            ArrayList<Customer> filteredCustomers = this.customerController.filter(
+              this.fld_f_customer_name.getText(),
+              (Customer.TYPE) this.cmb_f_customer_type.getSelectedItem()
+            );
+            loadCustomerTable(filteredCustomers);
+        });
+
+        btn_customer_reset.addActionListener(e -> {
+            loadCustomerTable(null);
+            this.fld_f_customer_name.setText(null);
+            this.cmb_f_customer_type.setSelectedItem(null);
         });
     }
 
@@ -92,9 +108,24 @@ public class DashboardUI extends JFrame {
         this.popup_customer.add("Update").addActionListener(e -> {
             int selectId = Integer.parseInt(tbl_customer.getValueAt(tbl_customer.getSelectedRow(), 0).toString());
             CustomerUI customerUI = new CustomerUI(this.customerController.getById(selectId));
-
+            customerUI.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadCustomerTable(null);
+                }
+            });
         });
-        this.popup_customer.add("Delete");
+        this.popup_customer.add("Delete").addActionListener(e -> {
+            int selectId = Integer.parseInt(tbl_customer.getValueAt(tbl_customer.getSelectedRow(), 0).toString());
+            if(Helper.confirm("sure")) {
+                if(this.customerController.delete(selectId)) {
+                    Helper.showMsg("done");
+                    loadCustomerTable(null);
+                } else {
+                    Helper.showMsg("error");
+                }
+            }
+        });
 
         this.tbl_customer.setComponentPopupMenu(this.popup_customer);
     }
