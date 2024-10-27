@@ -88,7 +88,21 @@ public class DashboardUI extends JFrame {
         //PRODUCT TAB
         loadProductTable(null);
         loadProductPopupMenu();
+        loadProductButtonEvent();
 
+
+    }
+
+    private void loadProductButtonEvent() {
+        this.btn_product_new.addActionListener(e -> {
+            ProductUI productUI = new ProductUI(new Product());
+            productUI.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadProductTable(null);
+                }
+            });
+        });
     }
 
     private void loadProductPopupMenu() {
@@ -100,8 +114,29 @@ public class DashboardUI extends JFrame {
             }
         });
 
-        this.popup_product.add("Update");
-        this.popup_product.add("Delete");
+        this.popup_product.add("Update").addActionListener(e -> {
+            int selectedId = Integer.parseInt(this.tbl_product.getValueAt(this.tbl_product.getSelectedRow(),0).toString());
+            ProductUI productUI = new ProductUI(this.productController.getById(selectedId));
+            productUI.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadProductTable(null);
+                }
+            });
+        });
+
+        this.popup_product.add("Delete").addActionListener(e -> {
+            int selectedId = Integer.parseInt(this.tbl_product.getValueAt(this.tbl_product.getSelectedRow(),0).toString());
+            if (Helper.confirm("sure")) {
+                if (this.productController.delete(selectedId)) {
+                    Helper.showMsg("done");
+                    loadProductTable(null);
+                } else {
+                    Helper.showMsg("error");
+                }
+            }
+
+        });
 
         this.tbl_product.setComponentPopupMenu(this.popup_product);
     }

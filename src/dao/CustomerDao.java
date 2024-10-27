@@ -91,8 +91,6 @@ public class CustomerDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
     public boolean delete(int id) {
